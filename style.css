@@ -26,7 +26,7 @@ body {
   width: min(100vw, 390px);
   height: min(100vh, 844px);
   display: grid;
-  grid-template-rows: 44px 145px 86px 94px 1fr 46px 28px;
+  grid-template-rows: 44px 145px 86px 112px 1fr 46px 28px;
   gap: 6px;
   padding: 8px;
   position: relative;
@@ -431,23 +431,27 @@ h1 {
   font-size: 12px;
   line-height: 1;
   font-weight: 900;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 18px 1fr;
   align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.order-mult,
+.order-boost {
+  display: grid;
+  place-items: center;
+  min-height: 31px;
+  padding: 3px 5px;
+  line-height: 1;
 }
 
 .order-mult {
-  display: inline-grid;
-  place-items: center;
-  min-width: 58px;
-  padding: 4px 6px;
   color: #211018;
   background: #ffd56f;
   border: 2px solid #fff2ad;
   box-shadow: 0 3px 0 #7b4717, 0 0 12px rgba(255, 213, 111, .35);
   font-size: 18px;
-  line-height: 1;
 }
 
 .order-times {
@@ -457,23 +461,45 @@ h1 {
 }
 
 .order-boost {
-  display: inline-grid;
-  place-items: center;
-  min-width: 86px;
-  padding: 4px 6px;
   color: #081914;
   background: #7effc8;
   border: 2px solid #caffea;
   box-shadow: 0 3px 0 #1d7659, 0 0 12px rgba(126, 255, 200, .32);
   font-size: 16px;
-  line-height: 1;
 }
 
+.order-mult::before,
+.order-boost::before {
+  font-size: 9px;
+  line-height: 1;
+  opacity: .78;
+}
+
+.order-mult::before {
+  content: "任務倍率";
+}
+
+.order-boost::before {
+  content: "藥水加成";
+}
+
+.order-estimate,
+.order-lowest,
 .order-extra {
-  width: 100%;
+  grid-column: 1 / -1;
   color: #c8b8c7;
   font-size: 11px;
   line-height: 1;
+}
+
+.order-estimate {
+  margin-top: 2px;
+  color: #ffd56f;
+  font-size: 13px;
+}
+
+.order-lowest {
+  color: #97ffe0;
 }
 
 .board-wrap {
@@ -831,7 +857,7 @@ h1 {
 
 @media (max-height: 680px) {
   .phone-shell {
-    grid-template-rows: 40px 120px 74px 86px 1fr 42px 24px;
+    grid-template-rows: 40px 120px 74px 104px 1fr 42px 24px;
     gap: 4px;
   }
   :root { --cell: clamp(38px, 12.2vw, 51px); }
@@ -839,7 +865,7 @@ h1 {
   #orderText { font-size: 12px; }
   .order-meta { font-size: 11px; }
   .order-mult, .order-times { font-size: 16px; }
-  .order-boost { font-size: 14px; min-width: 78px; }
+  .order-boost { font-size: 14px; }
 }
 
 @media (max-width: 520px) {

@@ -3,7 +3,7 @@ const TYPE_LABEL = { red: "紅", yellow: "黃", blue: "藍", green: "綠", purpl
 const SIZE = 6;
 const START_COINS = 1000;
 const MAX_SMALL_WIN = 8;
-const POTION_NEED = 5;
+const POTION_NEED = 10;
 const MAX_CASCADES_PER_MOVE = 10;
 
 const state = {
@@ -13,6 +13,7 @@ const state = {
   selected: null,
   busy: false,
   order: null,
+  orderPotions: Object.fromEntries(TYPES.map(t => [t, 0])),
   moveStats: null
 };
 
@@ -157,6 +158,7 @@ function init() {
   state.bet = Number(els.bet.value);
   state.selected = null;
   state.busy = false;
+  resetOrderPotions();
   createBoard();
   newOrder();
   resetMoveStats();
@@ -406,6 +408,7 @@ async function clearCells(clearSet, specialToCreate = null) {
     if (!tile) return;
     state.moveStats.cleared += 1;
     state.moveStats.potions[tile.type] += 1;
+    state.orderPotions[tile.type] += 1;
     if (tile.special === "bomb") state.moveStats.usedExplosion = true;
     state.board[r][c] = null;
   });
@@ -571,7 +574,7 @@ function transformColorToSpecial(type, special, clearSet) {
 
 function finalizeMove() {
   const stats = state.moveStats;
-  const fullPotions = TYPES.filter(t => stats.potions[t] >= POTION_NEED);
+  const fullPotions = TYPES.filter(t => state.orderPotions[t] >= POTION_NEED);
   const smallMult = fullPotions.length
     ? Math.min(MAX_SMALL_WIN, .1 + fullPotions.length * .7 + stats.cleared * .08 + Math.max(0, stats.cascades - 1) * .35)
     : 0;
@@ -600,24 +603,24 @@ function finalizeMove() {
   if (stats.smallWin > 0) sfx("coin");
   updateResultPanel();
   renderAll();
-  setTimeout(clearPotions, 700);
 }
 
 function checkOrderComplete() {
   const stats = state.moveStats;
-  const potionsOk = state.order.targets.every(t => stats.potions[t] >= POTION_NEED);
+  const potionsOk = state.order.targets.every(t => state.orderPotions[t] >= POTION_NEED);
   const specialOk = !state.order.needSpecial || stats.createdSpecials.includes(state.order.needSpecial) || (state.order.needSpecial === "bomb" && stats.usedExplosion);
   const cascadeOk = stats.cascades >= state.order.minCascade;
   return potionsOk && specialOk && cascadeOk;
 }
 
 function calculateOrderWin() {
-  const qualities = state.order.targets.map(t => state.moveStats.potions[t] / POTION_NEED);
+  const qualities = state.order.targets.map(t => state.orderPotions[t] / POTION_NEED);
   const quality = Math.min(3, Math.min(...qualities));
   return Math.floor(state.bet * state.order.multiplier * quality);
 }
 
 function newOrder() {
+  resetOrderPotions();
   const twoTargets = shuffle([...TYPES]).slice(0, 2);
   const variants = [
     { targets: [randomType()], multiplier: randInt(5, 8), needSpecial: null, minCascade: 1 },
@@ -636,18 +639,33 @@ function renderOrder() {
   const special = o.needSpecial ? (o.needSpecial === "bomb" ? "爆炸" : "彩虹") : "";
   const cascade = o.minCascade > 1 ? `${o.minCascade} 連鎖` : "";
   const extras = [special, cascade].filter(Boolean).join(" + ");
+  const boost = getPotionBoost(o);
+  const floor = getLowestTargetPotion(o);
+  const estimate = Math.floor(state.bet * o.multiplier * boost);
   els.orderText.textContent = targets;
   els.orderMeta.innerHTML = `
     <span class="order-mult">${o.multiplier}x</span>
     <span class="order-times">×</span>
-    <span class="order-boost">藥水 1-3x</span>
+    <span class="order-boost">${boost.toFixed(1)}x</span>
+    <span class="order-estimate">預估 ${estimate}</span>
+    <span class="order-lowest">最低：${TYPE_LABEL[floor.type]} ${floor.amount}/${POTION_NEED}</span>
     ${extras ? `<span class="order-extra">${extras}</span>` : ""}
   `;
 }
 
+function getPotionBoost(order) {
+  return Math.min(3, Math.min(...order.targets.map(t => state.orderPotions[t] / POTION_NEED)));
+}
+
+function getLowestTargetPotion(order) {
+  return order.targets
+    .map(type => ({ type, amount: state.orderPotions[type] }))
+    .sort((a, b) => a.amount - b.amount)[0];
+}
+
 function renderPotions() {
   TYPES.forEach(type => {
-    const amount = state.moveStats?.potions[type] || 0;
+    const amount = state.orderPotions[type] || 0;
     const pct = Math.min(220, amount / POTION_NEED * 100);
     const root = document.querySelector(`.potion.${type}`);
     root.querySelector(".fill").style.height = `${Math.min(100, pct)}%`;
@@ -655,7 +673,12 @@ function renderPotions() {
   });
 }
 
+function resetOrderPotions() {
+  state.orderPotions = Object.fromEntries(TYPES.map(t => [t, 0]));
+}
+
 function clearPotions() {
+  resetOrderPotions();
   TYPES.forEach(type => {
     const root = document.querySelector(`.potion.${type}`);
     root.querySelector(".fill").style.height = "0%";

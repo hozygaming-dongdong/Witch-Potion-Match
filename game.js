@@ -639,7 +639,7 @@ function renderOrder() {
   const special = o.needSpecial ? (o.needSpecial === "bomb" ? "爆炸" : "彩虹") : "";
   const cascade = o.minCascade > 1 ? `${o.minCascade} 連鎖` : "";
   const extras = [special, cascade].filter(Boolean).join(" + ");
-  const boost = getPotionBoost(o);
+  const boost = getDisplayedPotionBoost(o);
   const floor = getLowestTargetPotion(o);
   const estimate = Math.floor(state.bet * o.multiplier * boost);
   els.orderText.textContent = targets;
@@ -655,6 +655,10 @@ function renderOrder() {
 
 function getPotionBoost(order) {
   return Math.min(3, Math.min(...order.targets.map(t => state.orderPotions[t] / POTION_NEED)));
+}
+
+function getDisplayedPotionBoost(order) {
+  return Math.max(1, getPotionBoost(order));
 }
 
 function getLowestTargetPotion(order) {

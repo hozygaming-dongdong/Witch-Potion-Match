@@ -1,5 +1,12 @@
 const TYPES = ["red", "yellow", "blue", "green", "purple"];
 const TYPE_LABEL = { red: "紅", yellow: "黃", blue: "藍", green: "綠", purple: "紫" };
+const POTION_NAME = {
+  red: "生命藥水",
+  yellow: "光晶藥水",
+  blue: "冰露藥水",
+  green: "毒藤藥水",
+  purple: "暗影藥水"
+};
 const SIZE = 6;
 const START_COINS = 1000;
 const MAX_SMALL_WIN = 8;
@@ -635,20 +642,21 @@ function newOrder() {
 function renderOrder() {
   const o = state.order;
   els.turnsLeft.textContent = `剩餘 ${o.turns} 手`;
-  const targets = o.targets.map(t => `${TYPE_LABEL[t]}滿管`).join(" + ");
   const special = o.needSpecial ? (o.needSpecial === "bomb" ? "爆炸" : "彩虹") : "";
   const cascade = o.minCascade > 1 ? `${o.minCascade} 連鎖` : "";
   const extras = [special, cascade].filter(Boolean).join(" + ");
   const boost = getDisplayedPotionBoost(o);
   const floor = getLowestTargetPotion(o);
   const estimate = Math.floor(state.bet * o.multiplier * boost);
-  els.orderText.textContent = targets;
+  els.orderText.innerHTML = o.targets
+    .map(t => `<span class="order-target ${t}">熬滿${POTION_NAME[t]}</span>`)
+    .join("");
   els.orderMeta.innerHTML = `
     <span class="order-mult">${o.multiplier}x</span>
     <span class="order-times">×</span>
     <span class="order-boost">${boost.toFixed(1)}x</span>
     <span class="order-estimate">預估 ${estimate}</span>
-    <span class="order-lowest">最低：${TYPE_LABEL[floor.type]} ${floor.amount}/${POTION_NEED}</span>
+    <span class="order-lowest">瓶頸：${POTION_NAME[floor.type]} ${floor.amount}/${POTION_NEED}</span>
     ${extras ? `<span class="order-extra">${extras}</span>` : ""}
   `;
 }

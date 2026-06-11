@@ -26,7 +26,7 @@ body {
   width: min(100vw, 390px);
   height: min(100vh, 844px);
   display: grid;
-  grid-template-rows: 44px 145px 86px 112px 1fr 46px 28px;
+  grid-template-rows: 44px 145px 86px 126px 1fr 46px 28px;
   gap: 6px;
   padding: 8px;
   position: relative;
@@ -419,11 +419,43 @@ h1 {
 }
 
 #orderText {
-  margin: 5px 0 3px;
+  margin: 4px 0 4px;
   font-size: 14px;
   line-height: 1.15;
   font-weight: 800;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  align-items: center;
 }
+
+.order-target {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 5px;
+  color: #fff8df;
+  background: rgba(255,255,255,.08);
+  border: 2px solid rgba(255,255,255,.18);
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,.22);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.order-target::before {
+  content: "";
+  width: 10px;
+  height: 12px;
+  border: 2px solid #f3e8df;
+  background: var(--potion-color);
+  box-shadow: 0 0 8px var(--potion-color);
+}
+
+.order-target.red { --potion-color: #ff5b64; }
+.order-target.yellow { --potion-color: #ffe15a; color: #fff6b8; }
+.order-target.blue { --potion-color: #5ab6ff; }
+.order-target.green { --potion-color: #75ee7a; }
+.order-target.purple { --potion-color: #b875ff; }
 
 .order-meta {
   margin: 0;
@@ -486,20 +518,26 @@ h1 {
 .order-estimate,
 .order-lowest,
 .order-extra {
-  grid-column: 1 / -1;
   color: #c8b8c7;
   font-size: 11px;
   line-height: 1;
 }
 
 .order-estimate {
+  grid-column: 1 / 3;
   margin-top: 2px;
   color: #ffd56f;
   font-size: 13px;
 }
 
 .order-lowest {
+  grid-column: 3 / 4;
   color: #97ffe0;
+  text-align: right;
+}
+
+.order-extra {
+  grid-column: 1 / -1;
 }
 
 .board-wrap {
@@ -857,7 +895,7 @@ h1 {
 
 @media (max-height: 680px) {
   .phone-shell {
-    grid-template-rows: 40px 120px 74px 104px 1fr 42px 24px;
+    grid-template-rows: 40px 120px 74px 116px 1fr 42px 24px;
     gap: 4px;
   }
   :root { --cell: clamp(38px, 12.2vw, 51px); }

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>女巫湯鍋三消</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="phone-shell" aria-label="女巫湯鍋三消遊戲">
+    <section class="topbar">
+      <div class="coin-box">
+        <span class="coin-icon"></span>
+        <span id="coins">1000</span>
+      </div>
+      <label class="bet-box">
+        <span>BET</span>
+        <select id="betSelect" aria-label="選擇 BET">
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </label>
+      <button id="soundToggle" class="icon-btn" type="button" aria-label="音效開關">♪</button>
+      <button id="newGame" class="icon-btn" type="button" aria-label="重新開始">↻</button>
+    </section>
+
+    <section class="cauldron-stage" aria-label="女巫湯鍋表演區">
+      <div class="witch">
+        <div class="hat"></div>
+        <div class="face"></div>
+      </div>
+      <div id="cauldron" class="cauldron">
+        <div class="brew-glow"></div>
+        <div class="brew"></div>
+        <div id="cauldronText" class="cauldron-text">投入符石熬煮訂單</div>
+      </div>
+      <div id="coinBurst" class="coin-burst"></div>
+    </section>
+
+    <section class="potion-row" aria-label="五管藥水">
+      <div class="potion red" data-type="red">
+        <div class="tube"><div class="fill"></div></div>
+        <span>紅</span><b>0/5</b>
+      </div>
+      <div class="potion yellow" data-type="yellow">
+        <div class="tube"><div class="fill"></div></div>
+        <span>黃</span><b>0/5</b>
+      </div>
+      <div class="potion blue" data-type="blue">
+        <div class="tube"><div class="fill"></div></div>
+        <span>藍</span><b>0/5</b>
+      </div>
+      <div class="potion green" data-type="green">
+        <div class="tube"><div class="fill"></div></div>
+        <span>綠</span><b>0/5</b>
+      </div>
+      <div class="potion purple" data-type="purple">
+        <div class="tube"><div class="fill"></div></div>
+        <span>紫</span><b>0/5</b>
+      </div>
+    </section>
+
+    <section class="order-panel">
+      <div class="order-head">
+        <h1>女巫訂單</h1>
+        <span id="turnsLeft">剩餘 5 手</span>
+      </div>
+      <p id="orderText"></p>
+      <p id="orderMeta" class="order-meta"></p>
+    </section>
+
+    <section class="board-wrap">
+      <div id="board" class="board" aria-label="6 乘 6 符石盤面"></div>
+      <div id="toast" class="toast">交換相鄰符石開始熬煮</div>
+    </section>
+
+    <div id="bigWin" class="big-win" aria-hidden="true">
+      <span>訂單完成</span>
+      <b id="bigWinAmount">+0</b>
+    </div>
+
+    <section class="result-panel">
+      <div><span>本手消除</span><b id="clearedCount">0</b></div>
+      <div><span>連鎖波數</span><b id="cascadeCount">0</b></div>
+      <div><span>小獎</span><b id="smallWin">0</b></div>
+      <div><span>訂單獎</span><b id="orderWin">0</b></div>
+    </section>
+
+    <section class="hint-panel">
+      <span>特殊符石</span>
+      <b>線</b>整列/欄
+      <b>爆</b>周圍爆破
+      <b>彩</b>指定色清盤
+    </section>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
